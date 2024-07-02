@@ -9,7 +9,7 @@ import config
 import collections
 import numpy as np
 import matplotlib.pyplot as plt
-from mayavi import mlab
+# from mayavi import mlab
 from scipy.linalg import lstsq
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import least_squares
@@ -40,7 +40,8 @@ def extract_features(image_names):
             p = key_point.pt
             colors[i] = image[int(p[1])][int(p[0])]         
         colors_for_all.append(colors)
-    return np.array(key_points_for_all), np.array(descriptor_for_all), np.array(colors_for_all)
+    # return np.array(key_points_for_all), np.array(descriptor_for_all), np.array(colors_for_all)
+    return key_points_for_all, descriptor_for_all, colors_for_all
 
 def match_features(query, train):
     bf = cv2.BFMatcher(cv2.NORM_L2)
@@ -59,7 +60,7 @@ def match_all_features(descriptor_for_all):
     for i in range(len(descriptor_for_all) - 1):
         matches = match_features(descriptor_for_all[i], descriptor_for_all[i + 1])
         matches_for_all.append(matches)
-    return np.array(matches_for_all)
+    return matches_for_all
         
 ######################
 #寻找图与图之间的对应相机旋转角度以及相机平移
@@ -119,7 +120,8 @@ def init_structure(K, key_points_for_all, colors_for_all, matches_for_all):
     correspond_struct_idx = []
     for key_p in key_points_for_all:
         correspond_struct_idx.append(np.ones(len(key_p)) *- 1)
-    correspond_struct_idx = np.array(correspond_struct_idx)
+    # correspond_struct_idx = np.array(correspond_struct_idx)
+    correspond_struct_idx = correspond_struct_idx
     idx = 0
     matches = matches_for_all[0]
     for i, match in enumerate(matches):
@@ -243,9 +245,10 @@ def fig(structure, colors):
     colors /= 255
     for i in range(len(colors)):
         colors[i, :] = colors[i, :][[2, 1, 0]]
-    fig = plt.figure()
+    fig = plt.figure(figsize=(16,16))
     fig.suptitle('3d')
-    ax = fig.gca(projection = '3d')
+    ax = fig.add_subplot(projection = '3d')
+    # ax = fig.gca()
     for i in range(len(structure)):
         ax.scatter(structure[i, 0], structure[i, 1], structure[i, 2], color = colors[i, :], s = 5)
     ax.set_xlabel('x axis')
@@ -254,19 +257,19 @@ def fig(structure, colors):
     ax.view_init(elev = 135, azim = 90)
     plt.show()
 
-def fig_v1(structure):
+# def fig_v1(structure):
 
-    mlab.points3d(structure[:, 0], structure[:, 1], structure[:, 2], mode = 'point', name = 'dinosaur')
-    mlab.show()
+#     mlab.points3d(structure[:, 0], structure[:, 1], structure[:, 2], mode = 'point', name = 'dinosaur')
+#     mlab.show()
 
-def fig_v2(structure, colors):
+# def fig_v2(structure, colors):
 
-    for i in range(len(structure)):
+#     for i in range(len(structure)):
         
-        mlab.points3d(structure[i][0], structure[i][1], structure[i][2], 
-            mode = 'point', name = 'dinosaur', color = colors[i])
+#         mlab.points3d(structure[i][0], structure[i][1], structure[i][2], 
+#             mode = 'point', name = 'dinosaur', color = colors[i])
 
-    mlab.show()
+#     mlab.show()
     
 def main():
     imgdir = config.image_dir
@@ -275,7 +278,7 @@ def main():
     
     for i in range(len(img_names)):
         img_names[i] = imgdir + img_names[i]
-    # img_names = img_names[0:10]
+    # img_names = img_names[0:50]
 
     # K是摄像头的参数矩阵
     K = config.K
@@ -318,8 +321,8 @@ def main():
     # np.save('structure.npy', structure)
     # np.save('colors.npy', colors)
     
-    # fig(structure,colors)
-    fig_v1(structure)
+    fig(structure,colors)
+    # fig_v1(structure)
     # fig_v2(structure, colors)
    
 if __name__ == '__main__':

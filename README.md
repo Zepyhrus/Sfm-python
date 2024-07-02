@@ -3,7 +3,7 @@
 
 需要的包：
 opencv-python
-opencv-python-contrib
+opencv-contrib-python
 numpy
 scipy
 matplotlib
