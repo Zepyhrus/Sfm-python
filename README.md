@@ -2,6 +2,9 @@
 三维重建算法Structure from Motion(Sfm)的python实现
 
 需要的包：
+```bash
+pip install opencv-python opencv-contrib-python scipy matplotlib
+```
 opencv-python
 opencv-contrib-python
 numpy
